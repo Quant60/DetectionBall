@@ -1,0 +1,187 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>DetectionBall</title>
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0 }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f6fa;
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh; padding: 20px;
+    }
+    .card {
+      position: relative;                 /* для абсолютного позиционирования кнопки */
+      background: #fff;
+      padding: 50px;
+      border-radius: 16px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.08);
+      text-align: center;
+      max-width: 900px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 20px;
+      color: #222;
+    }
+
+    /* кнопка скачивания отчёта — абсолютная в правом верхнем углу */
+    .btn-report {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #28a745;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      transition: background .2s;
+    }
+    .btn-report:hover {
+      background: #218838;
+    }
+
+    input[type="file"] {
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+    .btn-primary {
+      background: #3461eb;
+      color: #fff;
+      border: none;
+      padding: 16px 36px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background .2s;
+      margin-top: 10px;
+    }
+    .btn-primary:disabled {
+      background: #aac3fc;
+      cursor: default;
+    }
+    .btn-primary:not(:disabled):hover {
+      background: #274bc3;
+    }
+    .status {
+      margin-top: 15px;
+      font-size: 1.05rem;
+      color: #555;
+    }
+    .result {
+      margin-top: 40px;
+      position: relative;
+    }
+    .result img {
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      background: #000;
+      display: block;
+    }
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .controls .btn {
+      padding: 12px 28px;
+      font-size: 1rem;
+      background: #4f6ef7;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .controls .btn:hover {
+      background: #3757d7;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>DetectionBall</h1>
+
+    <!-- перекочевала сюда -->
+    <a href="{% url 'report_pdf' %}" target="_blank" class="btn-report">
+      Скачать PDF-отчёт
+    </a>
+
+    <input type="file" id="file-input" accept="video/*"><br>
+    <button id="start-btn" class="btn-primary" disabled>
+      Загрузить и обработать
+    </button>
+    <div id="upload-status" class="status"></div>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('file-input');
+    const startBtn  = document.getElementById('start-btn');
+    const statusEl  = document.getElementById('upload-status');
+    const resultDiv = document.getElementById('result');
+
+    fileInput.onchange = () => {
+      statusEl.textContent = '';
+      resultDiv.innerHTML = '';
+      startBtn.disabled = !fileInput.files.length;
+    };
+
+    startBtn.onclick = () => {
+      statusEl.textContent = 'Обработка…';
+      startBtn.disabled = true;
+      resultDiv.innerHTML = '';
+
+      const fd = new FormData();
+      fd.append('video', fileInput.files[0]);
+
+      fetch('', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        body: fd
+      })
+      .then(r => r.json())
+      .then(json => {
+        if (json.output) {
+          statusEl.textContent = `Готово! Уверенность: ${json.confidence}`;
+          const url = `/media/${json.output}`;
+          resultDiv.innerHTML = `
+            <img id="result-gif" src="${url}" alt="result gif">
+            <div class="controls">
+              <button id="replay-btn" class="btn">Повторить GIF</button>
+              <a href="${url}" download class="btn">Скачать GIF</a>
+            </div>
+          `;
+          document.getElementById('replay-btn').onclick = () => {
+            const img = document.getElementById('result-gif');
+            img.src = '';
+            setTimeout(() => img.src = url, 100);
+          };
+        } else {
+          statusEl.textContent = 'Ошибка обработки';
+        }
+      })
+      .catch(() => {
+        statusEl.textContent = 'Сетевая ошибка';
+      })
+      .finally(() => {
+        startBtn.disabled = false;
+      });
+    };
+
+    function getCookie(name) {
+      let v = null;
+      document.cookie.split(';').forEach(c => {
+        const [k,val] = c.trim().split('=');
+        if (k === name) v = decodeURIComponent(val);
+      });
+      return v;
+    }
+  </script>
+</body>
+</html>
