@@ -23,12 +23,12 @@ reportlab, pandas, openpyxl (для отчётов).
 
 Этапы установки:
 1. Клонировать репозиторий:
-git clone https://github.com/Quant60/DetectionBall.git
-cd DetectionBall
+ git clone https://github.com/Quant60/DetectionBall.git
+ cd DetectionBall
 2. Создать виртуальное окружение и активировать:
-python -m venv .venv
-.venv/Scripts/activate    # Windows
-source .venv/bin/activate # Linux/MacOS
+ python -m venv .venv
+ .venv/Scripts/activate    # Windows
+ source .venv/bin/activate # Linux/MacOS
 3. Установить зависимости:
 pip install -r requirements.txt
 4. Настроить БД
