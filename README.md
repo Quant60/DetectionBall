@@ -23,8 +23,8 @@ DetectionBall
 
 Этапы установки:
 1. Клонировать репозиторий:
-    1.1. git clone https://github.com/Quant60/DetectionBall.git
-    1.2. cd DetectionBall
+1.1. git clone https://github.com/Quant60/DetectionBall.git
+1.2. cd DetectionBall
 2. Создать виртуальное окружение и активировать:
   2.1. python -m venv .venv
   2.2. .venv/Scripts/activate    # Windows
