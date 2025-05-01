@@ -13,13 +13,13 @@ DetectionBall
 8. Скачивание PDF-отчёта по истории обработок.
 
 Требования:
-Python 3.9+;
-Django 4.x;
-ultralytics (YOLO);
-OpenCV (cv2);
-imageio;
-psycopg2-binary (если PostgreSQL);
-reportlab, pandas, openpyxl (для отчётов).
+ Python 3.9+;
+ Django 4.x;
+ ultralytics (YOLO);
+ OpenCV (cv2);
+ imageio;
+ psycopg2-binary (если PostgreSQL);
+ reportlab, pandas, openpyxl (для отчётов).
 
 Этапы установки:
 1. Клонировать репозиторий:
