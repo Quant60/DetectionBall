@@ -32,7 +32,7 @@ source .venv/bin/activate # Linux/MacOS
 3. Установить зависимости:
 pip install -r requirements.txt
 4. Настроить БД
-5.Применить миграции:
+5. Применить миграции:
 python manage.py migrate
-6.Запустить сервер:
+6. Запустить сервер:
 python manage.py runserver
